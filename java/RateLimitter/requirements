@@ -1,0 +1,4 @@
+REQUIREMENTS:
+ - Throttle number of requests/ip on SLA Contract Time(mins).
+ - Number of requests/ip in last n seconds.
+ - Number of requests/browser in last n seconds.
