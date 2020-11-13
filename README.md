@@ -6,4 +6,4 @@
 - Scheduler [JAVA]
 - parking-lot [C++]
 - snake-ladder [C++]
-- beverage-machine-dispatcher[C++]
+- beverage-machine-dispatcher [C++]
