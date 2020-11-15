@@ -4,105 +4,33 @@ using namespace std;
 class Ticket {
 public:
     int ticketNo;
-    int price;
+    int basePrice;
     int slotId;
+    time_t timestamp;
 
     Ticket(int ticketNo, int price, int slotId) {
         this->ticketNo = ticketNo;
-        this->price = price;
+        this->basePrice = price;
         this->slotId = slotId;
-    }
-};
-
-class TicketMaster {
-    const int price = 10;
-    ParkingLot* parkingLot;
-    TicketMaster(ParkingLot* parkingLot) {
-        srand(time(0));
-        this->parkingLot = parkingLot;
+        this->timestamp = time(0);
     }
 
-    int getTicketNo()
+    void printTicket()
     {
-        return rand();
+        cout<<"---- Ticket Details ----"<<endl;
+        cout<<"Ticket Id : "<<ticketNo<<endl;
+        cout<<"Slot Id : "<<slotId<<endl;
+        cout<<"TimeStamp : "<<timestamp<<endl;
+        cout<<"------------------------"<<endl<<endl;
     }
-
-    Ticket* getTicket()
-    {
-        this->parkingLot->allocateSlot();
-        Ticket* ticket = new Ticket(getTicketNo(), price, );
-    }
-
-};
-
-abstract class Iprovisioner {
-public:
-    virtual Slot* allocateSlot() = 0;
-    virtual bool deallocateSlot() = 0;
 };
 
 enum VehicleType { SMALL, BIG, MEDIUM };
-
-class Provisioner: public Iprovisioner {
-    int size;
-    vector<Slot*> slots;
-    unordered_map<VehicleType, SlotType> vechicleToSlotMapping;
-public:
-    Provisioner(int size) {
-        this->size = size;
-        for(int i=0;i<size/3;i++)
-            slots.push_back(new SmallSlot(slots.size()));
-        for(int i=0;i<size/3;i++)
-            slots.push_back(new MidSlot(slots.size()));
-        for(int i=0;i<size/3;i++)
-            slots.push_back(new BigSlot(slots.size()));
-
-        vechicleToSlotMapping[VehicleType.SMALL] = SlotType.SMALL_SLOT;
-        vechicleToSlotMapping[VehicleType.MEDIUM] = SlotType.MEDIUM_SLOT;
-        vechicleToSlotMapping[VehicleType.BIG] = SlotType.BIG_SLOT;
-    }
-
-    Slot* allocateSlot(VehicleType vt) {
-        for(int i=0;i<size;i++)
-            if(slots[i]->type == vechicleToSlotMapping[vt] && !slots[i]->isOccupied)
-            {
-                slots[slotId]->isOccupied = true;
-                return slots[i];
-            }
-        return NULL;
-    }
-
-    bool deallocateSlot(int slotId) {
-        if(slots.size() > slotId && slots[slotId]->isOccupied)
-        {
-            slots[slotId]->isOccupied = false;
-            return true;
-        }
-        return false;
-    }
-};
-
-class ParkingLot {
-public:
-    int size;
-    Iprovisioner* provisioner;
-    ParkingLot(Iprovisioner* provisioner) {
-        this->provisioner = provisioner;
-    }
-
-    Slot* allocateSlot(VehicleType vt) {
-        return provisioner->allocateSlot(vt);
-    }
-
-    bool deallocateSlot(int slotId) {
-        return provisioner->deallocateSlot(slotId);
-    }
-};
-
+enum SlotType { SMALL_SLOT, BIG_SLOT, MEDIUM_SLOT };
 class Slot {
     int id;
 public:
-    const SlotType type;
+    SlotType type;
     bool isOccupied;
     bool isElectric;
     int length, width;
@@ -118,7 +46,6 @@ public:
     }
 };
 
-enum SlotType { SMALL_SLOT, BIG_SLOT, MEDIUM_SLOT };
 const int MID_LENGTH = 20;
 const int MID_WIDTH = 10;
 class MidSlot: public Slot {
@@ -158,14 +85,139 @@ public:
     }
 };
 
+class Iprovisioner {
+public:
+    virtual Slot* allocateSlot(VehicleType vt) = 0;
+    virtual bool deallocateSlot(int slotId) = 0;
+};
+
+class Provisioner: public Iprovisioner {
+    int parkingLotSize;
+    vector<Slot*> slots;
+    unordered_map<VehicleType, SlotType> vechicleToSlotMapping;
+public:
+    Provisioner(int size) {
+        this->parkingLotSize = size;
+        for(int i=0;i<parkingLotSize/3;i++)
+            slots.push_back(new SmallSlot(slots.size()));
+        for(int i=0;i<parkingLotSize/3;i++)
+            slots.push_back(new MidSlot(slots.size()));
+        for(int i=0;i<parkingLotSize/3;i++)
+            slots.push_back(new BigSlot(slots.size()));
+
+        vechicleToSlotMapping[SMALL] = SMALL_SLOT;
+        vechicleToSlotMapping[MEDIUM] = MEDIUM_SLOT;
+        vechicleToSlotMapping[BIG] = BIG_SLOT;
+    }
+
+    Slot* allocateSlot(VehicleType vt) {
+        for(int slotId=0;slotId<parkingLotSize;slotId++)
+            if(slots[slotId]->type == vechicleToSlotMapping[vt] && !slots[slotId]->isOccupied)
+            {
+                slots[slotId]->isOccupied = true;
+                return slots[slotId];
+            }
+        return NULL;
+    }
+
+    bool deallocateSlot(int slotId) {
+        if(slots.size() > slotId && slotId >= 0 && slots[slotId]->isOccupied)
+        {
+            slots[slotId]->isOccupied = false;
+            return true;
+        }
+        return false;
+    }
+};
+
+
+class ParkingLot {
+public:
+    int size;
+    Iprovisioner* provisioner;
+    ParkingLot(Iprovisioner* provisioner) {
+        this->provisioner = provisioner;
+    }
+
+    Slot* allocateSlot(VehicleType vt) {
+        return provisioner->allocateSlot(vt);
+    }
+
+    bool deallocateSlot(int slotId) {
+        return provisioner->deallocateSlot(slotId);
+    }
+};
+
+
+class TicketMaster {
+public:
+    const int basePrice = 10;
+    ParkingLot* parkingLot;
+
+    TicketMaster(ParkingLot* parkingLot) {
+        srand(time(0));
+        this->parkingLot = parkingLot;
+    }
+
+    int getTicketNo()
+    {
+        return rand();
+    }
+
+    Ticket* getTicket(VehicleType vt)
+    {
+        Slot* slot = this->parkingLot->allocateSlot(vt);
+        Ticket* ticket = new Ticket(getTicketNo(), basePrice, slot->getSlotId());
+        return ticket;
+    }
+
+    int returnTicketAndCalculateFare(Ticket* ticket)
+    {
+        bool isDeallocated = this->parkingLot->deallocateSlot(ticket->slotId);
+        if(!isDeallocated) {
+            cout<<"Wrong SlotID or already deallocated slot"<<endl;
+            return -1;
+        }
+        return basePrice + 10; // some business logic for price
+    }
+
+    void printTicket(Ticket* ticket)
+    {
+        ticket->printTicket();
+    }
+};
+
+
+class TicketMasterFactory {
+public:
+    const static int parkingLotSize = 30;
+    static TicketMaster* getTicketMaster() {
+        Iprovisioner* iprovisioner = new Provisioner(parkingLotSize);
+        ParkingLot* parkingLot = new ParkingLot(iprovisioner);
+        return new TicketMaster(parkingLot);
+    }
+};
+
+
 void Driver()
 {
+    TicketMaster* ticketMaster = TicketMasterFactory::getTicketMaster();
 
+    // TC 1
+    VehicleType vt = BIG;
+    Ticket* ticket = ticketMaster->getTicket(vt);
+    ticketMaster->printTicket(ticket);
+    int price = ticketMaster->returnTicketAndCalculateFare(ticket);
+    cout<<"Price : "<<price<<endl;
+
+    // TC 2
+    price = ticketMaster->returnTicketAndCalculateFare(ticket);
+    cout<<"Price : "<<price<<endl;
     return;
 }
 
 int main()
 {
     Driver();
-    return;
+    return 0;
 }

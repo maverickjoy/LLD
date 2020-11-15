@@ -17,7 +17,7 @@ Actions of user->
 */
 
 enum DenominationType { C1, C2, C3, C4 };
-enum BeverageType {COKE, SODA, PEPSI};
+enum BeverageType { COKE, SODA, PEPSI };
 
 class Beverage {
 public:
