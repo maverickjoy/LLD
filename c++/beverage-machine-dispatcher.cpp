@@ -65,7 +65,7 @@ struct Money {
 
 class VendingMachine {
 public:
-    map<DenominationType, int> cachierMap;
+    map<DenominationType, int> cashierMap;
     map<DenominationType, int> denominationExchangePrice;
     map<BeverageType, Beverage*>beverages;
     map<BeverageType, int> beverageCost;
@@ -120,12 +120,12 @@ public:
 
     void _addDenomination(DenominationType type, int coins)
     {
-        cachierMap[type] += coins;
+        cashierMap[type] += coins;
     }
 
     void _subtractDenomination(DenominationType type, int coins)
     {
-        cachierMap[type] -= coins;
+        cashierMap[type] -= coins;
     }
 
     int getPriceOfBeverage(BeverageType type)
@@ -181,7 +181,7 @@ public:
         vector<Money>total;
         vector<Money>res;
         map<DenominationType, int> tempCashier;
-        tempCashier = cachierMap;
+        tempCashier = cashierMap;
         for(int i=0;i<userMoney.size();i++)
         {
             tempCashier[userMoney[i].type] += userMoney[i].amount;
@@ -249,7 +249,7 @@ public:
     {
         cout<<"--- Money in Vending Machine ---"<<endl;
         vector<Money>wallet;
-        for(auto i: cachierMap)
+        for(auto i: cashierMap)
         {
             cout<<i.first<<", No of Coins : "<<i.second<<endl;
             wallet.push_back(Money(i.first, i.second));
