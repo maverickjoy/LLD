@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CoffeeMachine/CoffeeMachine.iml" filepath="$PROJECT_DIR$/CoffeeMachine/CoffeeMachine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PubSub/PubSub.iml" filepath="$PROJECT_DIR$/PubSub/PubSub.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RateLimitter/RateLimitter.iml" filepath="$PROJECT_DIR$/RateLimitter/RateLimitter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Scheduler/Scheduler.iml" filepath="$PROJECT_DIR$/Scheduler/Scheduler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/java.iml" filepath="$PROJECT_DIR$/.idea/java.iml" />
+    </modules>
+  </component>
+</project>
